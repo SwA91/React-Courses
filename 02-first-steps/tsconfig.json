@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    // para el servidor local y demas cosas fuera de React
+    { "path": "./tsconfig.node.json" }
+  ]
+}
