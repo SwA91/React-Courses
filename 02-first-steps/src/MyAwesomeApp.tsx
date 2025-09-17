@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 
 const firstName = "Pepe";
-const lastName = "Herrea";
+const lastName = "Fernandez";
 const array = [1, 2, 3, 4];
 const isActive = true;
 const myobj = {
