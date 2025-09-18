@@ -18,7 +18,7 @@ export const SearchBar = ({ placeholder = "Buscar", onQuery }: Props) => {
 
   // se ejecuta cuando se monta y desmoneta el componente
   // tiene que realizar una tarea puntual
-  // crear varios efectos necesarios
+  // crear varios efectos si es necesario
   useEffect(
     () => {
       // todo lo que hay aqui se escucha

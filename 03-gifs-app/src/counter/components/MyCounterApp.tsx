@@ -3,7 +3,7 @@ import { useCounter } from "../hooks/useCounter";
 export const MyCounterApp = () => {
   // ! No se puede establecer hooks condicionales
   // por el tema de posiciones en memora de las funciones
-  const { counter, handlSubtract, handleAdd, handleReset } = useCounter(11);
+  const { counter, handlSubtract, handleAdd, handleReset } = useCounter(10);
 
   return (
     <div
