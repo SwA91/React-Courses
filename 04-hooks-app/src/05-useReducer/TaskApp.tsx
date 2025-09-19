@@ -1,44 +1,47 @@
-import { useEffect, useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from "react";
 
-import { Plus, Trash2, Check } from 'lucide-react';
+import { Check, Plus, Trash2 } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 
-import { getTasksInitialState, taskReducer } from './reducer/tasksReducer';
+import { getTasksInitialState, taskReducer } from "./reducer/tasksReducer";
 
 export const TasksApp = () => {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   // const [todos, setTodos] = useState<Todo[]>([]);
   const [state, dispatch] = useReducer(taskReducer, getTasksInitialState());
 
+  // observamos el state para guardarlo en el localStorage
   useEffect(() => {
-    localStorage.setItem('tasks-state', JSON.stringify(state));
+    localStorage.setItem("tasks-state", JSON.stringify(state));
   }, [state]);
 
   const addTodo = () => {
-    if (inputValue.length === 0) return;
-    dispatch({ type: 'ADD_TODO', payload: inputValue });
-    setInputValue('');
+    if (inputValue.trim().length === 0) return;
+    // disparamos la accion con su payload nuevo
+    dispatch({ type: "ADD_TODO", payload: inputValue });
+    setInputValue("");
   };
 
   const toggleTodo = (id: number) => {
-    dispatch({ type: 'TOGGLE_TODO', payload: id });
+    dispatch({ type: "TOGGLE_TODO", payload: id });
   };
 
   const deleteTodo = (id: number) => {
-    dispatch({ type: 'DELETE_TODO', payload: id });
+    dispatch({ type: "DELETE_TODO", payload: id });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     // console.log({ key: e.key });
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       addTodo();
     }
   };
 
+  // hacemos uns desestructuracion del state y renombramos las variables
   const { todos, completed: completedCount, length: totalCount } = state;
 
   // const completedCount = todos.filter((todo) => todo.completed).length;
@@ -124,8 +127,8 @@ export const TasksApp = () => {
                     key={todo.id}
                     className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 ${
                       todo.completed
-                        ? 'bg-slate-50 border-slate-200'
-                        : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm'
+                        ? "bg-slate-50 border-slate-200"
+                        : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"
                     }`}
                   >
                     <Checkbox
@@ -136,8 +139,8 @@ export const TasksApp = () => {
                     <span
                       className={`flex-1 transition-all duration-200 ${
                         todo.completed
-                          ? 'text-slate-500 line-through'
-                          : 'text-slate-800'
+                          ? "text-slate-500 line-through"
+                          : "text-slate-800"
                       }`}
                     >
                       {todo.text}

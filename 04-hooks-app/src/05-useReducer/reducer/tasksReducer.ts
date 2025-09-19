@@ -1,5 +1,6 @@
-import * as z from 'zod/v4';
+import * as z from "zod/v4";
 
+// normalmente se saca en un fichero separado las interfaces
 interface Todo {
   id: number;
   text: string;
@@ -13,11 +14,17 @@ interface TaskState {
   pending: number;
 }
 
+/* 
+- es mejor definirla como type
+- normalmente se instancia como objeto cada valor, mas flexible
+- argumento o accion se suele llamar payload
+*/
 export type TaskAction =
-  | { type: 'ADD_TODO'; payload: string }
-  | { type: 'TOGGLE_TODO'; payload: number }
-  | { type: 'DELETE_TODO'; payload: number };
+  | { type: "ADD_TODO"; payload: string }
+  | { type: "TOGGLE_TODO"; payload: number }
+  | { type: "DELETE_TODO"; payload: number };
 
+// creamos el esquema con las validaciones de zod
 const TodoSchema = z.object({
   id: z.number(),
   text: z.string(),
@@ -25,14 +32,18 @@ const TodoSchema = z.object({
 });
 
 const TaskStateScheme = z.object({
+  // validamos el arreglo de mi esquema para TODO
   todos: z.array(TodoSchema),
   length: z.number(),
   completed: z.number(),
   pending: z.number(),
 });
 
+/* 
+- siempre inicializar una funcion para nuestro estado y no en el mismo Reducer
+*/
 export const getTasksInitialState = (): TaskState => {
-  const localStorageState = localStorage.getItem('tasks-state');
+  const localStorageState = localStorage.getItem("tasks-state");
 
   if (!localStorageState) {
     return {
@@ -43,8 +54,11 @@ export const getTasksInitialState = (): TaskState => {
     };
   }
 
-  // Validar mediante Zod
-  const result = TaskStateScheme.safeParse(JSON.parse(localStorageState));
+  // Validar mediante Zod, una alternativa es Yup
+  const result = TaskStateScheme.safeParse(
+    // parseamos de string a objeto js
+    JSON.parse(localStorageState)
+  );
 
   if (result.error) {
     console.log(result.error);
@@ -60,30 +74,53 @@ export const getTasksInitialState = (): TaskState => {
   return result.data;
 };
 
+/* 
+- Reducer es una funcion que regresa un objeto
+- siempre tiene que devolver un State
+- reducer es un patron de js compatible con cualquier framework
+- si tenemos muchos useState es mejor usar reducer
+*/
 export const taskReducer = (
+  /* 
+  - estado actual sobre el que se trabaja
+   */
   state: TaskState,
+  /* 
+  - determina un nuevo estado, nunca se ha de modificar dentro del reducer
+   */
   action: TaskAction
 ): TaskState => {
+  /* 
+  - es comun ver switch dentro de un reducer
+  */
   switch (action.type) {
-    case 'ADD_TODO': {
+    case "ADD_TODO": {
       const newTodo: Todo = {
         id: Date.now(),
         text: action.payload,
         completed: false,
       };
 
-      // ! No lo deben de hacer
+      // ! No lo deben de hacer, porque muta el state
+      // va en contra de los reducer, ya que react no se entera
       // state.todos.push(newTodo)
 
+      /* 
+      - no usamos break sino return para retornar el nuevo estado
+      */
       return {
+        // spread del state sin alterar
         ...state,
+        // alteramos el state con lo que nos interesa
+        // spread/esparcimos todos los todos actual y el nuevo
         todos: [...state.todos, newTodo],
         length: state.todos.length + 1,
         pending: state.pending + 1,
       };
     }
 
-    case 'DELETE_TODO': {
+    case "DELETE_TODO": {
+      // nos quedamos con todos menos el eliminado
       const currentTodos = state.todos.filter(
         (todo) => todo.id !== action.payload
       );
@@ -95,12 +132,17 @@ export const taskReducer = (
         ...state,
         todos: currentTodos,
         length: currentTodos.length,
+        // actualizamos su valor solo con los completados
         completed: currentTodos.filter((todo) => todo.completed).length,
+        // actualizamos su valor solo con los no completados
         pending: currentTodos.filter((todo) => !todo.completed).length,
       };
     }
 
-    case 'TOGGLE_TODO': {
+    case "TOGGLE_TODO": {
+      /* 
+      - marcamos completado el todo elegido
+      */
       const updatedTodos = state.todos.map((todo) => {
         if (todo.id === action.payload) {
           return { ...todo, completed: !todo.completed };
@@ -116,6 +158,7 @@ export const taskReducer = (
       };
     }
 
+    // por defecto devolvemos el state sin alterar
     default:
       return state;
   }
