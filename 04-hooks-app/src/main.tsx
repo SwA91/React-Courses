@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { TasksApp } from "./05-useReducer/TaskApp";
+import { MemoHook } from "./06-memos/MemoHook";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
@@ -11,6 +11,8 @@ createRoot(document.getElementById("root")!).render(
     {/* <TrafficLightWithHook></TrafficLightWithHook> */}
     {/* <PokemonPage></PokemonPage> */}
     {/* <FocusScreen></FocusScreen> */}
-    <TasksApp></TasksApp>
+    {/* <TasksApp></TasksApp> */}
+    {/* <ScrambleWords></ScrambleWords> */}
+    <MemoHook></MemoHook>
   </StrictMode>
 );
