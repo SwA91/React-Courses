@@ -1,3 +1,7 @@
+/* 
+- nos ayuda a centralizar todos nuestros state
+en ves de tener un monton de states
+*/
 export interface ScrambleWordsState {
   currentWord: string;
   errorCounter: number;
@@ -13,44 +17,46 @@ export interface ScrambleWordsState {
 }
 
 const GAME_WORDS = [
-  'REACT',
-  'JAVASCRIPT',
-  'TYPESCRIPT',
-  'HTML',
-  'ANGULAR',
-  'SOLID',
-  'NODE',
-  'VUEJS',
-  'SVELTE',
-  'EXPRESS',
-  'MONGODB',
-  'POSTGRES',
-  'DOCKER',
-  'KUBERNETES',
-  'WEBPACK',
-  'VITE',
-  'TAILWIND',
+  "REACT",
+  "JAVASCRIPT",
+  "TYPESCRIPT",
+  "HTML",
+  "ANGULAR",
+  "SOLID",
+  "NODE",
+  "VUEJS",
+  "SVELTE",
+  "EXPRESS",
+  "MONGODB",
+  "POSTGRES",
+  "DOCKER",
+  "KUBERNETES",
+  "WEBPACK",
+  "VITE",
+  "TAILWIND",
 ];
 
+/* Podrian ser funciones helper */
 // Esta función mezcla el arreglo para que siempre sea aleatorio
 const shuffleArray = (array: string[]) => {
   return array.sort(() => Math.random() - 0.5);
 };
 
 // Esta función mezcla las letras de la palabra
-const scrambleWord = (word: string = '') => {
+const scrambleWord = (word: string = "") => {
   return word
-    .split('')
+    .split("")
     .sort(() => Math.random() - 0.5)
-    .join('');
+    .join("");
 };
 
 export const getInitialState = (): ScrambleWordsState => {
+  // spread del array mezclado de palabras
   const shuffledWords = shuffleArray([...GAME_WORDS]);
   return {
     currentWord: shuffledWords[0],
     errorCounter: 0,
-    guess: '',
+    guess: "",
     isGameOver: false,
     maxAllowErrors: 3,
     maxSkips: 3,
@@ -62,46 +68,53 @@ export const getInitialState = (): ScrambleWordsState => {
   };
 };
 
+// tipamos mis acciones
 export type ScrambleWordsAction =
-  | { type: 'SET_GUESS'; payload: string }
-  | { type: 'CHECK_ANSWER' }
-  | { type: 'START_NEW_GAME'; payload: ScrambleWordsState }
-  | { type: 'SKIP_WORD' };
+  | { type: "SET_GUESS"; payload: string }
+  | { type: "CHECK_ANSWER" }
+  | { type: "START_NEW_GAME"; payload: ScrambleWordsState }
+  | { type: "SKIP_WORD" };
 
 export const scrambleWordsReducer = (
   state: ScrambleWordsState,
   action: ScrambleWordsAction
 ): ScrambleWordsState => {
   switch (action.type) {
-    case 'SET_GUESS':
+    case "SET_GUESS":
       return {
         ...state,
+        // grabamos los cambios
         guess: action.payload.trim().toUpperCase(),
       };
 
-    case 'CHECK_ANSWER': {
+    case "CHECK_ANSWER": {
       if (state.currentWord === state.guess) {
+        // eliminamos la palabra adivinada
         const newWords = state.words.slice(1);
 
+        // retornamos el nuevo state a una nueva palabra
         return {
           ...state,
           words: newWords,
           points: state.points + 1,
-          guess: '',
+          guess: "",
           currentWord: newWords[0],
+          // llamamos a una funcion externa como excepcion
+          // normalmente tendria que venir como parametro
           scrambledWord: scrambleWord(newWords[0]),
         };
       }
 
       return {
         ...state,
-        guess: '',
+        guess: "",
         errorCounter: state.errorCounter + 1,
         isGameOver: state.errorCounter + 1 >= state.maxAllowErrors,
       };
     }
 
-    case 'SKIP_WORD': {
+    case "SKIP_WORD": {
+      // no hacemos nada si es mayor al maximo de saltos
       if (state.skipCounter >= state.maxSkips) return state;
 
       const updatedWords = state.words.slice(1);
@@ -112,11 +125,12 @@ export const scrambleWordsReducer = (
         words: updatedWords,
         currentWord: updatedWords[0],
         scrambledWord: scrambleWord(updatedWords[0]),
-        guess: '',
+        guess: "",
       };
     }
 
-    case 'START_NEW_GAME':
+    case "START_NEW_GAME":
+      // retornamos el payload y no una funcion externa
       return action.payload;
 
     default:
