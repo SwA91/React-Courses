@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo } from "react";
 
 interface Props {
   subtitle: string;
@@ -6,9 +6,11 @@ interface Props {
   // callMyAPI: (myValue: string) => void;
   callMyAPI: () => void;
 }
-
+/* 
+! muy util memo() para componentes pesados
+*/
 export const MySubTitle = memo(({ subtitle, callMyAPI }: Props) => {
-  console.log('MySubTitle re-render');
+  console.log("MySubTitle re-render");
 
   return (
     <>
