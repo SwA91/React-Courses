@@ -17,6 +17,7 @@ export const MemoHook = () => {
   ? useCallBack() evita que se llame la funcion
   n veces cada vez que se renderiza el MemoHook()
   - esta funcion se va quedar legacy con memo()
+  - useCallback() memoriza la funcion
   */
   const handleMyAPICall = useCallback(
     () => {
